@@ -2,16 +2,16 @@ package ru.itmo.gutsol.tt.lambda;
 
 
 public class LambdaMemoization implements LambdaContainer {
-    private Lambda lambda;
+    private Lambda lambdaInt;
     private boolean fullyReduced = false;
 
     public LambdaMemoization(Lambda lambdaInt) {
-        this.lambda = lambdaInt;
+        this.lambdaInt = lambdaInt;
     }
 
     @Override
     public Lambda getLambda() {
-        return lambda;
+        return lambdaInt;
     }
 
     @Override
@@ -19,26 +19,26 @@ public class LambdaMemoization implements LambdaContainer {
         if (fullyReduced) {
             return null;
         }
-        Lambda reduced = lambda.reduce();
+        Lambda reduced = lambdaInt.reduce();
         if (reduced == null) {
             fullyReduced = true;
             return null;
         }
-        lambda = reduced;
+        lambdaInt = reduced;
         return this;
     }
 
     @Override
     public LambdaContainer substitute(Variable varSub, LambdaContainer sub) {
-        return memoization(getLambda().substituteShared(varSub, sub, null, null));
+        return memo(getLambda().substituteShared(varSub, sub, null, null));
     }
 
     @Override
     public LambdaContainer substituteShared(Variable varSub, LambdaContainer sub, VariableStack prevVarStack, VariableStack newVarStack) {
-        return memoization(getLambda().substituteShared(varSub, sub, prevVarStack, newVarStack));
+        return memo(getLambda().substituteShared(varSub, sub, prevVarStack, newVarStack));
     }
 
-    public static LambdaMemoization memoization(LambdaContainer arg) {
+    public static LambdaMemoization memo(LambdaContainer arg) {
         if (arg instanceof LambdaMemoization) {
             return (LambdaMemoization) arg;
         } else {

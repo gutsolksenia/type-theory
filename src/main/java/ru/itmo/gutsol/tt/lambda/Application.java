@@ -1,5 +1,7 @@
 package ru.itmo.gutsol.tt.lambda;
 
+import ru.itmo.gutsol.tt.types.Type;
+import ru.itmo.gutsol.tt.types.TypeController;
 
 public class Application extends Lambda {
     private final LambdaContainer funcContainer;
@@ -25,13 +27,13 @@ public class Application extends Lambda {
         if (funcContainer instanceof Abstraction) {
             return ((Abstraction) funcContainer).getBodyContainer()
                     .substitute(((Abstraction) funcContainer).getParam(),
-                            LambdaMemoization.memoization(getArg())).getLambda();
+                            LambdaMemoization.memo(getArg())).getLambda();
         }
         if (funcContainer instanceof LambdaMemoization) {
             Lambda funcInt = funcContainer.getLambda();
             if (funcInt instanceof Abstraction) {
                 return ((Abstraction) funcInt).getBodyContainer().substituteShared(((Abstraction) funcInt).getParam(),
-                        LambdaMemoization.memoization(getArg()), null, null).getLambda();
+                        LambdaMemoization.memo(getArg()), null, null).getLambda();
             }
         }
         LambdaContainer funcReduced = funcContainer.reduce();
@@ -60,6 +62,18 @@ public class Application extends Lambda {
             return new Application(funcSubst, argSubst);
         }
         return null;
+    }
+
+    @Override
+    public Type deduceType(TypeController typeController) {
+        Type funcType = getFunc().deduceType(typeController);
+        Type argType = getArg().deduceType(typeController);
+        if (funcType == null || argType == null) {
+            return null;
+        }
+        Type resType = typeController.createType(null);
+        boolean unifyRes = funcType.unifyWith(typeController.makeApplication(argType, resType));
+        return unifyRes ? resType : null;
     }
 
     @Override

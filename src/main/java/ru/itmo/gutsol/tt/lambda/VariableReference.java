@@ -1,5 +1,7 @@
 package ru.itmo.gutsol.tt.lambda;
 
+import ru.itmo.gutsol.tt.types.Type;
+import ru.itmo.gutsol.tt.types.TypeController;
 
 public class VariableReference extends Lambda {
     private final Variable variable;
@@ -12,6 +14,11 @@ public class VariableReference extends Lambda {
     @Override
     public LambdaContainer substitute(Variable varSub, LambdaContainer sub) {
         return varSub.equals(variable) ? sub : this;
+    }
+
+    @Override
+    public Type deduceType(TypeController typeController) {
+        return typeController.getType(this.variable).mono();
     }
 
     @Override
@@ -28,8 +35,8 @@ public class VariableReference extends Lambda {
             if (oldStack.getVariable().equals(variable)) {
                 return makeRef(newStack.getVariable());
             }
-            oldStack = oldStack.getPrevious();
-            newStack = newStack.getPrevious();
+            oldStack = oldStack.getPrev();
+            newStack = newStack.getPrev();
         }
         return this;
     }

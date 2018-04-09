@@ -1,5 +1,7 @@
 package ru.itmo.gutsol.tt.lambda;
 
+import ru.itmo.gutsol.tt.types.Type;
+import ru.itmo.gutsol.tt.types.TypeController;
 
 public class Abstraction extends Lambda {
     private Variable param;
@@ -49,6 +51,15 @@ public class Abstraction extends Lambda {
         return new Abstraction(param, bodySubst);
     }
 
+    @Override
+    public Type deduceType(TypeController typeController) {
+        Type paramType = typeController.getType(param).getType();
+        Type bodyType = getBody().deduceType(typeController);
+        if (bodyType == null) {
+            return null;
+        }
+        return typeController.makeApplication(paramType, bodyType);
+    }
 
     @Override
     public LambdaContainer substituteShared(Variable varSub, LambdaContainer sub, VariableStack prevVarStack, VariableStack newVarStack) {

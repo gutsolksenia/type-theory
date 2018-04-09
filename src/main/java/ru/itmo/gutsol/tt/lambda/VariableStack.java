@@ -2,11 +2,11 @@ package ru.itmo.gutsol.tt.lambda;
 
 public class VariableStack {
     private final Variable variable;
-    private VariableStack previous = null;
+    private VariableStack prev = null;
 
     public VariableStack(Variable variable, VariableStack prev) {
         this.variable = variable;
-        this.previous = prev;
+        this.prev = prev;
     }
 
     public VariableStack(Variable variable) {
@@ -17,7 +17,7 @@ public class VariableStack {
         return variable;
     }
 
-    public VariableStack getPrevious() {
-        return previous;
+    public VariableStack getPrev() {
+        return prev;
     }
 }

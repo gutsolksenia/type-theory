@@ -9,7 +9,16 @@ import ru.itmo.gutsol.tt.lambda.*;
 public class StubGenerator {
     public static LambdaStub toLambdaStub(String s) {
         LambdaLexer lexer = new LambdaLexer(new ANTLRInputStream(s));
-        return new LambdaParser(new CommonTokenStream(lexer)).expression().ret;
+        return new LambdaParser(new CommonTokenStream(lexer)).let_expression().ret;
+    }
+
+    public static LambdaStub let(String alias, LambdaStub def, LambdaStub expr) {
+        return scope -> {
+            Lambda defLambda = def.resolve(scope);
+            Variable var = new Variable(alias);
+            Lambda exprLambda = expr.resolve(new AbstractionScope(var, scope));
+            return new Let(var, defLambda, exprLambda);
+        };
     }
 
     public static LambdaStub abstraction(String alias, LambdaStub body) {

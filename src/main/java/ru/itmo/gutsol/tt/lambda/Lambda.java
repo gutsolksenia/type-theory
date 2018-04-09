@@ -1,6 +1,8 @@
 package ru.itmo.gutsol.tt.lambda;
 
 
+import ru.itmo.gutsol.tt.types.Type;
+import ru.itmo.gutsol.tt.types.TypeController;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,6 +35,8 @@ public abstract class Lambda implements LambdaContainer {
         }
         return lambda;
     }
+
+    public abstract Type deduceType(TypeController typeController);
 
     public Set<Variable> getVariables() {
         return variables;
